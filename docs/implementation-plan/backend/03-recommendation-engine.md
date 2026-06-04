@@ -6,7 +6,7 @@
 
 **Architecture:** `patient/recommendations.php` receives symptom POST, calls Python via `shell_exec`, maps predicted disease → specialization in MySQL, fetches candidate doctors, computes weighted scores in PHP, renders ranked results, and saves a record to the `recommendations` table.
 
-**Prerequisites:** `01-database-and-auth.md` and `02-patient-module.md` complete. Python `ml/predict.py` and `ml/model.pkl` exist (from `python/01-ml-pipeline.md`).
+**Prerequisites:** `01-database-and-auth.md` complete. Python `ml/predict.py` and `ml/model.pkl` exist (from `python/01-ml-pipeline.md`).
 
 **Tech Stack:** PHP 8.x, MySQLi, Python via `shell_exec`
 

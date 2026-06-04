@@ -106,6 +106,7 @@ git commit -m "feat(python): add symptom-disease training dataset"
 - [ ] **Step 1: Write train_model.py**
 
 ```python
+import os
 import pandas as pd
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
@@ -116,7 +117,8 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import accuracy_score, classification_report
 import joblib
 
-DATASET_PATH = 'ml/dataset.csv'
+BASE = os.path.dirname(os.path.abspath(__file__))
+DATASET_PATH = os.path.join(BASE, 'dataset.csv')
 ACCEPTANCE_THRESHOLD = 0.80
 
 
@@ -176,9 +178,9 @@ def train_and_evaluate():
     print("\nDetailed classification report (Random Forest):")
     print(classification_report(y_test, rf.predict(X_test), target_names=le.classes_))
 
-    joblib.dump(rf, 'ml/model.pkl')
-    joblib.dump(le, 'ml/label_encoder.pkl')
-    joblib.dump(symptom_list, 'ml/symptom_list.pkl')
+    joblib.dump(rf, os.path.join(BASE, 'model.pkl'))
+    joblib.dump(le, os.path.join(BASE, 'label_encoder.pkl'))
+    joblib.dump(symptom_list, os.path.join(BASE, 'symptom_list.pkl'))
     print("\nArtifacts saved: model.pkl, label_encoder.pkl, symptom_list.pkl")
 
 
@@ -221,10 +223,13 @@ This script is called by PHP via `shell_exec("python ml/predict.py \"fever,cough
 - [ ] **Step 1: Write predict.py**
 
 ```python
+import os
 import sys
 import json
 import joblib
 import numpy as np
+
+BASE = os.path.dirname(os.path.abspath(__file__))
 
 CONFIDENCE_THRESHOLD = 0.60
 FALLBACK_DISEASE = 'Unknown'
@@ -276,9 +281,9 @@ DISEASE_SPECIALIZATION_MAP = {
 
 
 def predict_disease(symptoms_input):
-    model = joblib.load('ml/model.pkl')
-    le = joblib.load('ml/label_encoder.pkl')
-    symptom_list = joblib.load('ml/symptom_list.pkl')
+    model = joblib.load(os.path.join(BASE, 'model.pkl'))
+    le = joblib.load(os.path.join(BASE, 'label_encoder.pkl'))
+    symptom_list = joblib.load(os.path.join(BASE, 'symptom_list.pkl'))
 
     patient_symptoms = [s.strip().lower().replace(' ', '_') for s in symptoms_input.split(',')]
 

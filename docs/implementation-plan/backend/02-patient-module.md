@@ -19,7 +19,6 @@
 | `patient/dashboard.php` | Patient home — summary stats and quick links |
 | `patient/profile.php` | View and update patient profile |
 | `patient/symptoms.php` | Symptom selection form (POST → recommendation engine) |
-| `patient/recommendations.php` | Display ranked doctor results from POST data |
 | `patient/search.php` | Manual doctor search with filters |
 | `patient/book_appointment.php` | Select slot and confirm booking |
 | `patient/appointments.php` | List all appointments with statuses |

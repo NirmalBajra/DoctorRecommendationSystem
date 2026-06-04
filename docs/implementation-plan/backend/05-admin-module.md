@@ -28,6 +28,126 @@
 
 ---
 
+## Task 0: Seed Reference Data
+
+**Why first:** Specializations must exist before doctors can register. Diseases and mappings must exist before the ML-to-DB specialization lookup in the recommendation engine works.
+
+> **Note:** The 132-symptom seed SQL is in `docs/implementation-plan/backend/02-patient-module.md` Task 3 Step 2 — run it at the same time as this task.
+
+- [ ] **Step 1: Seed specializations**
+
+In phpMyAdmin → SQL:
+
+```sql
+INSERT INTO specializations (specialization_name) VALUES
+('General Physician'),('Dermatologist'),('Gastroenterologist'),
+('Neurologist'),('Cardiologist'),('Pulmonologist'),('Endocrinologist'),
+('Orthopedic Surgeon'),('Rheumatologist'),('Allergist'),
+('ENT Specialist'),('Urologist'),('Vascular Surgeon'),
+('Infectious Disease Specialist');
+```
+
+- [ ] **Step 2: Seed diseases**
+
+```sql
+INSERT INTO diseases (disease_name) VALUES
+('Fungal infection'),('Allergy'),('GERD'),('Chronic cholestasis'),
+('Drug Reaction'),('Peptic ulcer disease'),('AIDS'),('Diabetes'),
+('Gastroenteritis'),('Bronchial Asthma'),('Hypertension'),('Migraine'),
+('Cervical spondylosis'),('Paralysis (brain hemorrhage)'),('Jaundice'),
+('Malaria'),('Chicken pox'),('Dengue'),('Typhoid'),('hepatitis A'),
+('Hepatitis B'),('Hepatitis C'),('Hepatitis D'),('Hepatitis E'),
+('Alcoholic hepatitis'),('Tuberculosis'),('Common Cold'),('Pneumonia'),
+('Dimorphic hemmorhoids(piles)'),('Heart attack'),('Varicose veins'),
+('Hypothyroidism'),('Hyperthyroidism'),('Hypoglycemia'),('Osteoarthritis'),
+('Arthritis'),('(vertigo) Paroymsal  Positional Vertigo'),('Acne'),
+('Urinary tract infection'),('Psoriasis'),('Impetigo');
+```
+
+Expected: 41 diseases inserted.
+
+- [ ] **Step 3: Seed disease-specialization mappings**
+
+Run after Steps 1 and 2:
+
+```sql
+-- Gastroenterologist
+INSERT INTO disease_specialization_map (disease_id, specialization_id)
+SELECT d.disease_id, s.specialization_id FROM diseases d, specializations s
+WHERE s.specialization_name = 'Gastroenterologist'
+  AND d.disease_name IN ('GERD','Chronic cholestasis','Peptic ulcer disease','Gastroenteritis',
+      'Jaundice','hepatitis A','Hepatitis B','Hepatitis C','Hepatitis D','Hepatitis E',
+      'Alcoholic hepatitis','Dimorphic hemmorhoids(piles)');
+
+-- Dermatologist
+INSERT INTO disease_specialization_map (disease_id, specialization_id)
+SELECT d.disease_id, s.specialization_id FROM diseases d, specializations s
+WHERE s.specialization_name = 'Dermatologist'
+  AND d.disease_name IN ('Fungal infection','Drug Reaction','Acne','Psoriasis','Impetigo');
+
+-- General Physician
+INSERT INTO disease_specialization_map (disease_id, specialization_id)
+SELECT d.disease_id, s.specialization_id FROM diseases d, specializations s
+WHERE s.specialization_name = 'General Physician'
+  AND d.disease_name IN ('Malaria','Chicken pox','Dengue','Typhoid','Common Cold');
+
+-- Endocrinologist
+INSERT INTO disease_specialization_map (disease_id, specialization_id)
+SELECT d.disease_id, s.specialization_id FROM diseases d, specializations s
+WHERE s.specialization_name = 'Endocrinologist'
+  AND d.disease_name IN ('Diabetes','Hypothyroidism','Hyperthyroidism','Hypoglycemia');
+
+-- Pulmonologist
+INSERT INTO disease_specialization_map (disease_id, specialization_id)
+SELECT d.disease_id, s.specialization_id FROM diseases d, specializations s
+WHERE s.specialization_name = 'Pulmonologist'
+  AND d.disease_name IN ('Bronchial Asthma','Tuberculosis','Pneumonia');
+
+-- Cardiologist
+INSERT INTO disease_specialization_map (disease_id, specialization_id)
+SELECT d.disease_id, s.specialization_id FROM diseases d, specializations s
+WHERE s.specialization_name = 'Cardiologist'
+  AND d.disease_name IN ('Hypertension','Heart attack');
+
+-- Neurologist
+INSERT INTO disease_specialization_map (disease_id, specialization_id)
+SELECT d.disease_id, s.specialization_id FROM diseases d, specializations s
+WHERE s.specialization_name = 'Neurologist'
+  AND d.disease_name IN ('Migraine','Paralysis (brain hemorrhage)');
+
+-- Orthopedic Surgeon
+INSERT INTO disease_specialization_map (disease_id, specialization_id)
+SELECT d.disease_id, s.specialization_id FROM diseases d, specializations s
+WHERE s.specialization_name = 'Orthopedic Surgeon'
+  AND d.disease_name IN ('Cervical spondylosis','Osteoarthritis');
+
+-- Remaining single-disease specializations
+INSERT INTO disease_specialization_map (disease_id, specialization_id)
+SELECT d.disease_id, s.specialization_id FROM diseases d, specializations s
+WHERE (d.disease_name = 'Allergy'                              AND s.specialization_name = 'Allergist')
+   OR (d.disease_name = 'AIDS'                                 AND s.specialization_name = 'Infectious Disease Specialist')
+   OR (d.disease_name = 'Varicose veins'                       AND s.specialization_name = 'Vascular Surgeon')
+   OR (d.disease_name = 'Arthritis'                            AND s.specialization_name = 'Rheumatologist')
+   OR (d.disease_name = '(vertigo) Paroymsal  Positional Vertigo' AND s.specialization_name = 'ENT Specialist')
+   OR (d.disease_name = 'Urinary tract infection'              AND s.specialization_name = 'Urologist');
+```
+
+- [ ] **Step 4: Verify**
+
+```sql
+SELECT COUNT(*) FROM specializations;           -- expected: 14
+SELECT COUNT(*) FROM diseases;                  -- expected: 41
+SELECT COUNT(*) FROM disease_specialization_map; -- expected: 41
+```
+
+- [ ] **Step 5: Commit**
+
+```bash
+git commit -m "feat(db): seed specializations, diseases, and disease-specialization mappings"
+```
+
+---
+
 ## Task 1: Admin Dashboard
 
 **Files:**
@@ -569,24 +689,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_mapping'])) {
 
 Then render a mapping form and table below the diseases table.
 
-- [ ] **Step 4: Seed specializations**
-
-In phpMyAdmin → SQL:
-
-```sql
-INSERT INTO specializations (specialization_name) VALUES
-('General Physician'),('Dermatologist'),('Gastroenterologist'),
-('Neurologist'),('Cardiologist'),('Pulmonologist'),('Endocrinologist'),
-('Orthopedic Surgeon'),('Rheumatologist'),('Allergist'),
-('ENT Specialist'),('Urologist'),('Vascular Surgeon'),
-('Infectious Disease Specialist');
-```
-
-- [ ] **Step 5: Test CRUD for specializations**
+- [ ] **Step 4: Test CRUD for specializations**
 
 Add, edit, delete a specialization. Verify in phpMyAdmin.
 
-- [ ] **Step 6: Commit**
+- [ ] **Step 5: Commit**
 
 ```bash
 git add admin/manage_specializations.php admin/manage_symptoms.php admin/manage_diseases.php

@@ -184,7 +184,7 @@ Work through phases **in order**. Phases 1 and 2 can be done in parallel (Python
 **Plan file:** `docs/implementation-plan/backend/05-admin-module.md`  
 **Also see:** `docs/implementation-plan/frontend/04-admin-pages.md`
 
-- [ ] **P8-T1** Seed reference data — add specializations, symptoms, diseases, mappings (SQL in plan Task 1)
+- [ ] **P8-T1** Seed reference data — add specializations, symptoms, diseases, mappings (SQL in admin plan Task 0; symptoms SQL in patient plan Task 3 Step 2)
 - [ ] **P8-T2** Dashboard — implement `admin/dashboard.php`
 - [ ] **P8-T3** Doctor approval — implement `admin/approve_doctors.php`
 - [ ] **P8-T4** Manage patients — implement `admin/manage_patients.php`

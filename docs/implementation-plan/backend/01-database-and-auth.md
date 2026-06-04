@@ -162,7 +162,7 @@ CREATE TABLE recommendations (
     FOREIGN KEY (predicted_specialization_id) REFERENCES specializations(specialization_id)
 );
 
--- Default admin account (password: admin123 — change immediately after setup)
+-- Default admin account (password: password — change immediately after setup)
 INSERT INTO users (name, email, password_hash, role, status)
 VALUES ('Admin', 'admin@drs.local',
         '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', 'active');
@@ -328,7 +328,7 @@ git commit -m "feat(backend): add MySQL connection config"
 
 ---
 
-## Task 3: Auth Helpers and Session Guards
+## Task 4: Auth Helpers and Session Guards
 
 **Files:**
 - Create: `includes/auth_check.php`
@@ -398,7 +398,7 @@ git commit -m "feat(backend): add session guards for patient, doctor, admin role
 
 ---
 
-## Task 4: Patient Registration
+## Task 5: Patient Registration
 
 **Files:**
 - Create: `auth/patient_register.php`
@@ -530,7 +530,7 @@ git commit -m "feat(auth): add patient registration with email duplicate check a
 
 ---
 
-## Task 5: Patient Login
+## Task 6: Patient Login
 
 **Files:**
 - Create: `auth/patient_login.php`
@@ -626,7 +626,7 @@ git commit -m "feat(auth): add patient login with session creation and regenerat
 
 ---
 
-## Task 6: Doctor Registration and Login
+## Task 7: Doctor Registration and Login
 
 **Files:**
 - Create: `auth/doctor_register.php`
@@ -685,8 +685,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $uid = $conn->insert_id;
 
                 $s2 = $conn->prepare('INSERT INTO doctors (user_id, specialization_id, qualification, experience_years, consultation_fee, clinic_name, license_number, contact_number, city, area) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-                $s2->bind_param('iisidssss', $uid, $spec_id, $qual, $exp, $fee, $clinic, $license, $contact, $city, $area);
-                // Note: 'i' for spec_id, 'i' for uid, 's' qual, 'i' exp, 'd' fee, 's' clinic, 's' license, 's' contact, 's' city, 's' area
+                $s2->bind_param('iisidsssss', $uid, $spec_id, $qual, $exp, $fee, $clinic, $license, $contact, $city, $area);
                 $s2->execute();
                 $conn->commit();
                 $success = 'Registration submitted. Please wait for admin approval.';
@@ -817,7 +816,7 @@ git commit -m "feat(auth): add doctor registration (pending approval) and login 
 
 ---
 
-## Task 7: Admin Login and Logout
+## Task 8: Admin Login and Logout
 
 **Files:**
 - Create: `auth/admin_login.php`
