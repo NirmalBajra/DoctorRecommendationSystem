@@ -16,9 +16,13 @@
 |---|---|
 | `database/schema.sql` | Full MySQL schema — run once to create all tables |
 | `config/database.php` | DB connection singleton using MySQLi |
+| `config/app.php` | Application constants: Python path, base URL, app name |
+| `config/.htaccess` | Deny direct HTTP access to config/ folder |
 | `includes/auth_check.php` | `requirePatient()`, `requireDoctor()`, `requireAdmin()` guards |
 | `includes/header.php` | Role-aware HTML nav included on every page |
 | `includes/footer.php` | HTML footer included on every page |
+| `includes/.htaccess` | Deny direct HTTP access to includes/ folder |
+| `errors/403.php` | Access denied page shown on unauthorized access |
 | `auth/patient_register.php` | Patient registration form + handler |
 | `auth/patient_login.php` | Patient login form + handler |
 | `auth/doctor_register.php` | Doctor registration form + handler |
@@ -185,7 +189,97 @@ git commit -m "feat(db): create full MySQL schema for all 11 tables"
 
 ---
 
-## Task 2: PHP Database Config
+## Task 2: Application Config and Security
+
+**Files:**
+- Create: `config/app.php`
+- Create: `config/.htaccess`
+- Create: `includes/.htaccess`
+- Create: `ml/.htaccess`
+- Create: `errors/403.php`
+
+- [ ] **Step 1: Write config/app.php**
+
+```php
+<?php
+
+// Python executable — change to 'python3' on Linux/Mac
+define('PYTHON_BIN', 'python');
+
+// Absolute path to the ml/ directory
+define('ML_DIR', dirname(__DIR__) . DIRECTORY_SEPARATOR . 'ml');
+
+// Application base URL (no trailing slash)
+define('BASE_URL', 'http://localhost/doctors-recommendation-system');
+
+// Application name
+define('APP_NAME', 'Doctors Recommendation System');
+
+// ML confidence threshold
+define('ML_CONFIDENCE_THRESHOLD', 0.60);
+```
+
+- [ ] **Step 2: Write config/.htaccess** (blocks direct HTTP access to config files)
+
+```apache
+Order deny,allow
+Deny from all
+```
+
+- [ ] **Step 3: Write includes/.htaccess** (same — PHP includes must not be web-accessible)
+
+```apache
+Order deny,allow
+Deny from all
+```
+
+- [ ] **Step 4: Write ml/.htaccess** (protects model.pkl and dataset.csv from web access)
+
+```apache
+Order deny,allow
+Deny from all
+```
+
+- [ ] **Step 5: Write errors/403.php**
+
+```php
+<?php
+http_response_code(403);
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>Access Denied</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container text-center py-5">
+    <h1 class="display-4">403</h1>
+    <p class="lead">Access Denied. You do not have permission to view this page.</p>
+    <a href="/doctors-recommendation-system/index.php" class="btn btn-primary">Go Home</a>
+</div>
+</body>
+</html>
+```
+
+- [ ] **Step 6: Test .htaccess protection**
+
+Visit `http://localhost/doctors-recommendation-system/config/database.php` in browser.
+Expected: 403 Forbidden — not the PHP file contents.
+
+- [ ] **Step 7: Update auth_check.php to use errors/403.php for access-denied redirects**
+
+In `includes/auth_check.php`, change the redirect in each `requireX()` function to point to the login page. For unauthorized cross-role access (e.g., patient trying to reach admin pages), redirect to `errors/403.php` instead of the login page.
+
+- [ ] **Step 8: Commit**
+
+```bash
+git add config/app.php config/.htaccess includes/.htaccess ml/.htaccess errors/403.php
+git commit -m "feat(security): add app config constants, .htaccess directory protection, and 403 error page"
+```
+
+---
+
+## Task 3: PHP Database Config
 
 **Files:**
 - Create: `config/database.php`

@@ -685,15 +685,46 @@ $badge    = ['pending' => 'warning', 'approved' => 'success', 'rejected' => 'dan
 </html>
 ```
 
-- [ ] **Step 2: Test filtering by status**
+- [ ] **Step 2: Add admin appointment completion action (FR-019)**
+
+FR-019 requires doctors **or admin** to be able to mark appointments as completed. Add this POST handler at the top of `manage_appointments.php`, before the query:
+
+```php
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['complete_id'])) {
+    $appt_id = (int)$_POST['complete_id'];
+    $upd = $conn->prepare('UPDATE appointments SET status = "completed" WHERE appointment_id = ? AND status = "approved"');
+    $upd->bind_param('i', $appt_id);
+    $upd->execute();
+    $success = $upd->affected_rows > 0 ? 'Appointment marked as completed.' : 'Appointment could not be completed.';
+}
+```
+
+Then in the table row, add a Complete button for approved appointments:
+
+```php
+<td>
+    <?php if ($a['status'] === 'approved'): ?>
+    <form method="POST" style="display:inline">
+        <input type="hidden" name="complete_id" value="<?= $a['appointment_id'] ?>">
+        <button class="btn btn-sm btn-primary" onclick="return confirm('Mark as completed?')">Complete</button>
+    </form>
+    <?php endif; ?>
+</td>
+```
+
+- [ ] **Step 3: Test filtering by status**
 
 Filter "pending", "completed". Verify correct rows shown.
 
-- [ ] **Step 3: Commit**
+- [ ] **Step 4: Test admin appointment completion**
+
+Find an approved appointment. Click Complete. Verify `status = completed` in DB. Patient should now be able to leave a review.
+
+- [ ] **Step 5: Commit**
 
 ```bash
 git add admin/manage_appointments.php
-git commit -m "feat(admin): add appointment monitoring page with status filter"
+git commit -m "feat(admin): add appointment monitoring with status filter and admin completion action (FR-019)"
 ```
 
 ---

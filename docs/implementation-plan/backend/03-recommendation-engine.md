@@ -184,10 +184,12 @@ if (empty($selected_symptoms)) {
 }
 
 // ── Step 1: Call Python prediction ──────────────────────────────────────────
+require_once '../config/app.php'; // provides PYTHON_BIN and ML_DIR constants
+
 $symptoms_str = implode(',', $selected_symptoms);
 $escaped      = escapeshellarg($symptoms_str);
-$ml_root      = realpath(__DIR__ . '/../ml');
-$output       = shell_exec("python \"{$ml_root}/predict.py\" {$escaped} 2>&1");
+$predict_path = escapeshellarg(ML_DIR . DIRECTORY_SEPARATOR . 'predict.py');
+$output       = shell_exec(PYTHON_BIN . " {$predict_path} {$escaped} 2>&1");
 $prediction   = json_decode($output, true);
 
 $predicted_disease = 'Unknown';

@@ -1,0 +1,89 @@
+/* Doctors Recommendation System — custom styles */
+/* Plan: docs/implementation-plan/frontend/01-base-layout.md — Task 1 */
+
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: #ffffff !important;
+}
+
+.hero-section {
+    background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+    color: #ffffff;
+    padding: 80px 0 60px;
+}
+
+.hero-section h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+.feature-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-4px);
+}
+
+.feature-icon {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+}
+
+.card {
+    border-radius: 10px;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.07);
+}
+
+.badge {
+    font-size: 0.78rem;
+}
+
+footer {
+    background-color: #343a40;
+    color: #adb5bd;
+    padding: 20px 0;
+    margin-top: 60px;
+    font-size: 0.875rem;
+}
+
+footer a {
+    color: #adb5bd;
+    text-decoration: none;
+}
+
+footer a:hover {
+    color: #ffffff;
+}
+
+.score-bar {
+    height: 8px;
+    border-radius: 4px;
+    background: #dee2e6;
+}
+
+.score-fill {
+    height: 8px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #0d6efd, #0a58ca);
+}
+
+.symptom-check-label {
+    font-size: 0.875rem;
+    cursor: pointer;
+}
+
+@media (max-width: 576px) {
+    .hero-section h1 {
+        font-size: 1.8rem;
+    }
+}

@@ -1,0 +1,18 @@
+# Generated ML artifacts — run ml/train_model.py to regenerate
+ml/model.pkl
+ml/label_encoder.pkl
+ml/symptom_list.pkl
+
+# Dataset — download separately from Kaggle
+ml/dataset.csv
+
+# XAMPP / local environment
+config/database.php
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/
